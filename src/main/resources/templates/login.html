@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/matrix.css">
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        input {
+            background: black;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            margin: 5px;
+            padding: 10px;
+        }
+
+        ::placeholder {
+            color: #00FF00;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+
+<h1>Welcome to the Matrix</h1>
+
+<form method="post" th:action="@{/login}">
+    <input type="text" name="username" placeholder="Neo"><br>
+    <input type="password" name="password" placeholder="•••••"><br>
+    <input type="submit" value="Enter">
+</form>
+
+<script src="/js/matrix.js"></script>
+</body>
+</html>
