@@ -6,52 +6,72 @@
     <link rel="stylesheet" type="text/css" href="/css/matrix.css">
     <style>
         body {
-            background-color: black;
+            margin: 0;
+            overflow: hidden;
+        }
+        .login-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
             color: #00FF00;
             font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
         }
-
-        input {
+        .login-box input {
             background: black;
             border: 1px solid #00FF00;
             color: #00FF00;
-            margin: 5px;
             padding: 10px;
+            margin: 5px;
         }
-
-        ::placeholder {
+        .login-box input::placeholder {
             color: #00FF00;
         }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            pointer-events: none;
+        .login-box input[type=submit] {
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 <canvas id="matrix"></canvas>
 
-<h1>Welcome to the Matrix</h1>
-
-<form method="post" th:action="@{/login}">
-    <input type="text" name="username" placeholder="Neo"><br>
-    <input type="password" name="password" placeholder="•••••"><br>
-    <input type="submit" value="Enter">
-</form>
+<div class="login-box">
+    <h1>Welcome to the Matrix</h1>
+    <form id="loginForm">
+        <input type="text" name="username" placeholder="Neo"><br>
+        <input type="password" name="password" placeholder="......"><br>
+        <input type="submit" value="Enter">
+    </form>
+</div>
 
 <script src="/js/matrix.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("loginForm");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // Останавливаем стандартную перезагрузку
+
+            const formData = new FormData(form);
+
+            fetch("/login", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/";
+                } else {
+                    alert("Неверный логин или пароль");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка при входе:", error);
+                alert("Ошибка соединения с сервером");
+            });
+        });
+    });
+</script>
 </body>
 </html>
