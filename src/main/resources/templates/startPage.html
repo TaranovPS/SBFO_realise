@@ -1,35 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Matrix Login</title>
-    <link rel="stylesheet" type="text/css" href="/css/matrix.css">
     <style>
         body {
             margin: 0;
-            overflow: hidden;
-        }
-        .login-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            color: #00FF00;
-            font-family: monospace;
-        }
-        .login-box input {
+            padding: 0;
             background: black;
-            border: 1px solid #00FF00;
-            color: #00FF00;
+            color: #00ff00;
+            font-family: monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .login-box {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            background: black;
+            color: #00ff00;
+            border: 1px solid #00ff00;
             padding: 10px;
-            margin: 5px;
+            margin-bottom: 15px;
+            width: 100%;
         }
-        .login-box input::placeholder {
-            color: #00FF00;
-        }
-        .login-box input[type=submit] {
+
+        button {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 10px 20px;
             cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -37,41 +56,45 @@
 <canvas id="matrix"></canvas>
 
 <div class="login-box">
-    <h1>Welcome to the Matrix</h1>
-    <form id="loginForm">
-        <input type="text" name="username" placeholder="Neo"><br>
-        <input type="password" name="password" placeholder="......"><br>
-        <input type="submit" value="Enter">
+    <form method="post" action="/login">
+        <h2>Вход в систему</h2>
+        <input type="text" name="username" placeholder="Логин" required>
+        <input type="password" name="password" placeholder="Пароль" required>
+        <button type="submit">Войти</button>
     </form>
 </div>
 
-<script src="/js/matrix.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("loginForm");
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
 
-        form.addEventListener("submit", function (e) {
-            e.preventDefault(); // Останавливаем стандартную перезагрузку
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
-            const formData = new FormData(form);
+    const katakana = 'アァイィウヴエカガキクグケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars = katakana.split("");
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-            fetch("/login", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = "/";
-                } else {
-                    alert("Неверный логин или пароль");
-                }
-            })
-            .catch(error => {
-                console.error("Ошибка при входе:", error);
-                alert("Ошибка соединения с сервером");
-            });
-        });
-    });
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 35);
 </script>
 </body>
 </html>
