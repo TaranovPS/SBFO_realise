@@ -8,7 +8,7 @@ public class MatrixController {
 
     @GetMapping("/")
     public String home() {
-        return "startPage";
+        return "login";
     }
 
     @GetMapping("/login")

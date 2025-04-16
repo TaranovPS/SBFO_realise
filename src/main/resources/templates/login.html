@@ -1,20 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Login</title>
-</head>
+<html>
 <body>
-<h2>Вход</h2>
-<form th:action="@{/login}" method="post">
-    <div>
-        <label>Логин: <input type="text" name="username"/></label>
-    </div>
-    <div>
-        <label>Пароль: <input type="password" name="password"/></label>
-    </div>
-    <div>
-        <button type="submit">Войти</button>
-    </div>
+<form method="post" action="/login">
+    <input type="text" name="username" placeholder="Логин">
+    <input type="password" name="password" placeholder="Пароль">
+    <button type="submit">Войти</button>
 </form>
 </body>
 </html>
