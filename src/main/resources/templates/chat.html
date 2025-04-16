@@ -2,71 +2,68 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Матрица | Чат</title>
+    <title>Матрица - Чат</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
             background: black;
             color: #00FF00;
             font-family: monospace;
         }
 
         canvas {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            z-index: 0;
+            z-index: -1;
         }
 
         .chat-container {
-            position: relative;
-            z-index: 1;
-            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            border: 2px solid #00FF00;
+            margin: 5px;
+            padding: 10px;
         }
 
-        .chat-box {
+        .chat-messages {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border: 1px solid #00FF00;
-            border-radius: 5px;
+            white-space: pre-wrap;
         }
 
-        .message {
-            margin: 5px 0;
-        }
-
-        .form-box {
+        .chat-input {
             display: flex;
+            margin-top: 10px;
         }
 
-        input[type="text"] {
+        .chat-input input {
             flex: 1;
-            padding: 10px;
             background: black;
-            color: #00FF00;
             border: 1px solid #00FF00;
+            color: #00FF00;
+            font-family: monospace;
+            padding: 10px;
+            font-size: 16px;
         }
 
-        button {
-            padding: 10px 20px;
+        .chat-input button {
             background: #00FF00;
             color: black;
             border: none;
-            cursor: pointer;
             font-weight: bold;
+            padding: 10px 20px;
+            font-family: monospace;
+            font-size: 16px;
+            cursor: pointer;
         }
 
-        button:hover {
+        .chat-input button:hover {
             background: #00cc00;
         }
     </style>
@@ -75,32 +72,28 @@
 <canvas id="matrix"></canvas>
 
 <div class="chat-container">
-    <div class="chat-box" id="chatBox">
-        <div class="message">[GPT]: Привет, пользователь. Я слушаю.</div>
+    <div class="chat-messages" id="messages">
+        <div><strong>[GPT]:</strong> Привет, пользователь. Я слушаю.</div>
     </div>
-    <form class="form-box" onsubmit="sendMessage(event)">
-        <input type="text" id="userInput" placeholder="Введите сообщение...">
+    <form class="chat-input" onsubmit="sendMessage(event)">
+        <input type="text" id="user-input" placeholder="Введите сообщение..." autocomplete="off" />
         <button type="submit">Отправить</button>
     </form>
 </div>
 
 <script>
-    // Падающие символы
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
 
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
 
-    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const fontSize = 14;
     const columns = canvas.width / fontSize;
-    const drops = [];
+    const drops = Array(Math.floor(columns)).fill(1);
 
-    for (let i = 0; i < columns; i++)
-        drops[i] = Math.random() * canvas.height;
-
-    function draw() {
+    function drawMatrix() {
         ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -111,38 +104,28 @@
             const text = letters[Math.floor(Math.random() * letters.length)];
             ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                 drops[i] = 0;
+            }
 
             drops[i]++;
         }
     }
 
-    setInterval(draw, 33);
+    setInterval(drawMatrix, 33);
 
-    // Заглушка для общения (имитация)
     function sendMessage(event) {
         event.preventDefault();
-        const input = document.getElementById("userInput");
-        const chatBox = document.getElementById("chatBox");
-
-        const userMessage = input.value.trim();
-        if (!userMessage) return;
-
-        const userDiv = document.createElement("div");
-        userDiv.classList.add("message");
-        userDiv.textContent = `[Вы]: ${userMessage}`;
-        chatBox.appendChild(userDiv);
-
-        input.value = "";
-
-        setTimeout(() => {
-            const responseDiv = document.createElement("div");
-            responseDiv.classList.add("message");
-            responseDiv.textContent = `[GPT]: Я получил: "${userMessage}"`;
-            chatBox.appendChild(responseDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }, 500);
+        const input = document.getElementById("user-input");
+        const message = input.value.trim();
+        if (message) {
+            const messages = document.getElementById("messages");
+            const div = document.createElement("div");
+            div.textContent = `[Вы]: ${message}`;
+            messages.appendChild(div);
+            input.value = "";
+            messages.scrollTop = messages.scrollHeight;
+        }
     }
 </script>
 </body>
