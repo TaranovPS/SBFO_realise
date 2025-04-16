@@ -1,74 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Chat</title>
+    <title>Матрица | Чат</title>
     <style>
-        body {
-            background-color: black;
-            color: #00ff00;
-            font-family: "Courier New", monospace;
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+            color: #00FF00;
+            font-family: monospace;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .chat-container {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             padding: 20px;
         }
-        #chat-box {
-            border: 1px solid #00ff00;
-            padding: 10px;
-            height: 400px;
-            overflow-y: scroll;
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
             margin-bottom: 10px;
-        }
-        #user-input {
-            width: 80%;
+            background: rgba(0, 0, 0, 0.5);
             padding: 10px;
-            border: 1px solid #00ff00;
+            border: 1px solid #00FF00;
+            border-radius: 5px;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+
+        .form-box {
+            display: flex;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
             background: black;
-            color: #00ff00;
+            color: #00FF00;
+            border: 1px solid #00FF00;
         }
-        #send-btn {
-            padding: 10px;
-            background: #00ff00;
+
+        button {
+            padding: 10px 20px;
+            background: #00FF00;
             color: black;
             border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #00cc00;
         }
     </style>
 </head>
 <body>
-<h1>Matrix Chat</h1>
-<div id="chat-box"></div>
-<input type="text" id="user-input" placeholder="Type your message...">
-<button id="send-btn">Send</button>
+<canvas id="matrix"></canvas>
+
+<div class="chat-container">
+    <div class="chat-box" id="chatBox">
+        <div class="message">[GPT]: Привет, пользователь. Я слушаю.</div>
+    </div>
+    <form class="form-box" onsubmit="sendMessage(event)">
+        <input type="text" id="userInput" placeholder="Введите сообщение...">
+        <button type="submit">Отправить</button>
+    </form>
+</div>
 
 <script>
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
+    // Падающие символы
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
 
-    sendBtn.addEventListener('click', async () => {
-        const message = userInput.value;
-        if (!message.trim()) return;
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
-        const userMessageElem = document.createElement('div');
-        userMessageElem.textContent = 'You: ' + message;
-        chatBox.appendChild(userMessageElem);
+    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
 
-        userInput.value = '';
+    for (let i = 0; i < columns; i++)
+        drops[i] = Math.random() * canvas.height;
 
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ prompt: message })
-        });
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const data = await response.json();
-        const botMessageElem = document.createElement('div');
-        botMessageElem.textContent = 'GPT: ' + data.response;
-        chatBox.appendChild(botMessageElem);
+        ctx.fillStyle = "#0F0";
+        ctx.font = fontSize + "px monospace";
 
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters[Math.floor(Math.random() * letters.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                drops[i] = 0;
+
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 33);
+
+    // Заглушка для общения (имитация)
+    function sendMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById("userInput");
+        const chatBox = document.getElementById("chatBox");
+
+        const userMessage = input.value.trim();
+        if (!userMessage) return;
+
+        const userDiv = document.createElement("div");
+        userDiv.classList.add("message");
+        userDiv.textContent = `[Вы]: ${userMessage}`;
+        chatBox.appendChild(userDiv);
+
+        input.value = "";
+
+        setTimeout(() => {
+            const responseDiv = document.createElement("div");
+            responseDiv.classList.add("message");
+            responseDiv.textContent = `[GPT]: Я получил: "${userMessage}"`;
+            chatBox.appendChild(responseDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 500);
+    }
 </script>
 </body>
 </html>

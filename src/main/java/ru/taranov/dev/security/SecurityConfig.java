@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/startPage")
+                        .loginPage("/")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/chat", true)
                         .permitAll()
