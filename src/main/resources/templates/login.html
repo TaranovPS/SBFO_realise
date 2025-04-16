@@ -1,10 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в Матрицу</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+            font-family: monospace;
+            color: #00FF00;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .login-form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border: 1px solid #00FF00;
+            border-radius: 10px;
+        }
+
+        input, button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            background: black;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            font-size: 16px;
+            width: 200px;
+        }
+
+        button {
+            background: #00FF00;
+            color: black;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00cc00;
+        }
+    </style>
+</head>
 <body>
-<form method="post" action="https://taran-developer.ru/login">
-    <input name="username" value="admin">
-    <input name="password" value="admin" type="password">
-    <button type="submit">Войти</button>
-</form>
-</body>
-</html>
+
+<canvas id="matrix"></canvas>
+
+<div class="login-form">
+    <h2>Вход в Матрицу</h2>
+    <form method="post" action="https://taran-developer.ru/login">
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="password" name="password" placeholder="Пароль" required>
+        <button type="submit">Войти</button>
+    </form>
+</div>
+
+<script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = 'アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリ
