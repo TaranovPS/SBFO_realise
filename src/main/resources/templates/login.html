@@ -1,10 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в Матрицу</title>
+    <style>
+        html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          background: black;
+          font-family: monospace;
+          color: #00FF00;
+          overflow: hidden;
+        }
+
+        canvas {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none; /* важно! чтобы клики не блокировались */
+          z-index: 0;
+        }
+
+        .login-form {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(0, 0, 0, 0.7);
+          padding: 30px;
+          border: 2px solid #00FF00;
+          border-radius: 10px;
+          z-index: 1;
+          text-align: center;
+        }
+
+        .login-form input {
+          background: black;
+          color: #00FF00;
+          border: 1px solid #00FF00;
+          padding: 10px;
+          margin: 10px;
+          width: 200px;
+        }
+
+        .login-form button {
+          background: #00FF00;
+          color: black;
+          border: none;
+          padding: 10px 20px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        .login-form button:hover {
+          background: #00cc00;
+        }
+    </style>
+</head>
 <body>
-<form method="post" action="https://taran-developer.ru/login">
-    <input name="username" value="admin">
-    <input name="password" value="admin" type="password">
-    <button type="submit">Войти</button>
-</form>
+<canvas id="matrix"></canvas>
+
+<div class="login-form">
+    <h2>Вход в Матрицу</h2>
+    <form method="post" action="https://taran-developer.ru/login">
+        <input type="text" name="username" placeholder="Имя пользователя" required><br>
+        <input type="password" name="password" placeholder="Пароль" required><br>
+        <button type="submit">Войти</button>
+    </form>
+</div>
+
+<script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+</script>
 </body>
 </html>
+
