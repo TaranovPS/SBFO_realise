@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Chat</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00ff00;
+            font-family: "Courier New", monospace;
+            padding: 20px;
+        }
+        #chat-box {
+            border: 1px solid #00ff00;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #00ff00;
+            background: black;
+            color: #00ff00;
+        }
+        #send-btn {
+            padding: 10px;
+            background: #00ff00;
+            color: black;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Matrix Chat</h1>
+<div id="chat-box"></div>
+<input type="text" id="user-input" placeholder="Type your message...">
+<button id="send-btn">Send</button>
+
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    sendBtn.addEventListener('click', async () => {
+        const message = userInput.value;
+        if (!message.trim()) return;
+
+        const userMessageElem = document.createElement('div');
+        userMessageElem.textContent = 'You: ' + message;
+        chatBox.appendChild(userMessageElem);
+
+        userInput.value = '';
+
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: message })
+        });
+
+        const data = await response.json();
+        const botMessageElem = document.createElement('div');
+        botMessageElem.textContent = 'GPT: ' + data.response;
+        chatBox.appendChild(botMessageElem);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+</script>
+</body>
+</html>

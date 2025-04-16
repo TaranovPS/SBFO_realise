@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/matrix.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        .login-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            color: #00FF00;
+            font-family: monospace;
+        }
+        .login-box input {
+            background: black;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            padding: 10px;
+            margin: 5px;
+        }
+        .login-box input::placeholder {
+            color: #00FF00;
+        }
+        .login-box input[type=submit] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+
+<div class="login-box">
+    <h1>Welcome to the Matrix</h1>
+    <form id="loginForm">
+        <input type="text" name="username" placeholder="Neo"><br>
+        <input type="password" name="password" placeholder="......"><br>
+        <input type="submit" value="Enter">
+    </form>
+</div>
+
+<script src="/js/matrix.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("loginForm");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // Останавливаем стандартную перезагрузку
+
+            const formData = new FormData(form);
+
+            fetch("/login", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/";
+                } else {
+                    alert("Неверный логин или пароль");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка при входе:", error);
+                alert("Ошибка соединения с сервером");
+            });
+        });
+    });
+</script>
+</body>
+</html>
