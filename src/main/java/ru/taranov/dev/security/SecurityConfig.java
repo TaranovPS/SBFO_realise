@@ -22,6 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/startPage", "/login", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
@@ -31,8 +32,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/chat", true)
                         .permitAll()
-                )
-                .csrf(AbstractHttpConfigurer::disable);
+                );
         return http.build();
     }
 
